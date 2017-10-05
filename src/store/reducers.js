@@ -1,4 +1,5 @@
 import C from '../constants';
+import { combineReducers } from 'redux';
 
 export const goal = (state=10, action) => 
     (action.type === C.SET_GOAL)? parseInt(action.payload) : state
@@ -6,7 +7,7 @@ export const goal = (state=10, action) =>
 export const skiDay = (state=null, action) =>
     (action.type === C.ADD_DAY)?  action.payload : state
 
-export const error = (state=[], action) => {
+export const errors = (state=[], action) => {
     switch (action.type) {
         case C.ADD_ERROR:
             return [...state, action.payload];
@@ -56,3 +57,13 @@ export const suggestions = (state=[], action) => {
             return state;
     }
 }
+
+export default combineReducers({
+    allSkiDays,
+    goal,
+    errors,
+    resortNames: combineReducers({
+        fetching,
+        suggestions
+    })
+});
