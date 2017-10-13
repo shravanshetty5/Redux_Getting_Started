@@ -1,5 +1,5 @@
 import C from './constants';
-
+import fetch from 'isomorphic-fetch';
 export const addDay = (resort, date, powder=false, backcountry=false) => {
     // App logic
     return {
@@ -62,5 +62,30 @@ export const randomGoals = () => {
                 })
             }, 1500)
         }
+    };
+};
+
+export const suggestResortNames  = (value) => {
+    return (dispatch) => {
+        dispatch({
+            type: C.FETCH_RESORT_NAMES
+        });
+
+        fetch('http://localhost:3333/resorts/' + value)
+            .then(response => response.json())
+            .then(suggestions => {
+                dispatch(
+                    changeSuggestions(suggestions)
+                )
+            })
+            .catch(error => {
+                dispatch(
+                    addError(error.message)
+                );
+                dispatch({
+                    type: C.CANCEL_FETCHING
+                }
+                )
+            })
     };
 };
