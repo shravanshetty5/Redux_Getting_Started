@@ -1,20 +1,40 @@
-import C from './constants';
-import appReducer from './store/reducers';
-import initialState from './initialState.json';
-import { createStore } from 'redux';
+import storeFactory from './store';
+import { addDay, removeDay, setGoal, addError, randomGoals} from './actions'
 
-const store = createStore(appReducer, initialState);
 
-console.log('initial state', store.getState());
+const initialState = (localStorage['redux-store']) ? JSON.parse(localStorage['redux-store']) : {};
 
-store.dispatch({
-	type: C.ADD_DAY,
-	payload: {
-		"resort": "Mt Shasta",
-		"date": "2016-10-28",
-			"powder": false,
-			"backcountry": true
-	}
-});
 
-console.log('next state', store.getState());
+
+const saveState = () => {
+	const state = JSON.stringify(store.getState());
+	localStorage['redux-store'] = state;
+}
+
+const store = storeFactory(initialState)
+
+store.subscribe(saveState);
+
+store.dispatch(
+	addDay("Mt Shasta", "2016-10-28", true, true)
+);
+
+store.dispatch(
+	addDay("Squaw valley", "2016-3-28", true, false)
+);
+
+store.dispatch(
+	addDay("The Canyons", "2016-1-2", false, true)
+);
+
+store.dispatch(
+	removeDay("2016-3-28")
+);
+
+store.dispatch(
+	setGoal(40)
+);
+
+store.dispatch(
+	randomGoals()
+);
