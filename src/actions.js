@@ -1,91 +1,79 @@
-import C from './constants';
-import fetch from 'isomorphic-fetch';
-export const addDay = (resort, date, powder=false, backcountry=false) => {
-    // App logic
+import C from './constants'
+import fetch from 'isomorphic-fetch'
+
+export function addDay(resort, date, powder=false, backcountry=false) {
+
     return {
         type: C.ADD_DAY,
-        payload: {resort, date, powder, backcountry}
+        payload: {resort,date,powder,backcountry}
     }
+
 }
 
-export const removeDay = (day) => {
+export const removeDay = function(date) {
+
     return {
         type: C.REMOVE_DAY,
-        payload: day
+        payload: date
     }
+
 }
 
-export const setGoal = (goal) => {
-    return {
+export const setGoal = (goal) => 
+    ({
         type: C.SET_GOAL,
         payload: goal
-    }
-}
+    })
 
-export const addError = (error) => {
-    return {
-        type: C.ADD_ERROR,
-        payload: error
-    }
-}
+export const addError = (message) => 
+   ({
+      type: C.ADD_ERROR,
+      payload: message
+   })
 
-export const clearError = (index) => {
-    return {
+export const clearError = index => 
+    ({
         type: C.CLEAR_ERROR,
         payload: index
-    }
-}
+    })   
 
-export const changeSuggestions = (suggestions) => {
-    return {
-        type: C.CHANGE_SUGGESTIONS,
-        payload: suggestions
-    }
-}
+export const changeSuggestions = suggestions => 
+  ({
+    type: C.CHANGE_SUGGESTIONS,
+    payload: suggestions
+  })
 
-export const clearSuggestions = () => {
-    return {
+export const clearSuggestions = () => 
+    ({
         type: C.CLEAR_SUGGESTIONS
-    }
-}
+    })
 
-export const randomGoals = () => {
-    return (dispatch, getState) => {
-        if (!getState().resortNames.fetching) {
+export const suggestResortNames = value => dispatch => {
+
+    dispatch({
+        type: C.FETCH_RESORT_NAMES
+    })
+
+    fetch('http://localhost:3333/resorts/' + value)
+        .then(response => response.json())
+        .then(suggestions => {
+
             dispatch({
-                type: C.FETCH_RESORT_NAMES
-            });
-    
-            setTimeout(() => {
-                dispatch({
-                    type: C.CANCEL_FETCHING
-                })
-            }, 1500)
-        }
-    };
-};
-
-export const suggestResortNames  = (value) => {
-    return (dispatch) => {
-        dispatch({
-            type: C.FETCH_RESORT_NAMES
-        });
-
-        fetch('http://localhost:3333/resorts/' + value)
-            .then(response => response.json())
-            .then(suggestions => {
-                dispatch(
-                    changeSuggestions(suggestions)
-                )
+                type: C.CHANGE_SUGGESTIONS,
+                payload: suggestions
             })
-            .catch(error => {
-                dispatch(
-                    addError(error.message)
-                );
-                dispatch({
-                    type: C.CANCEL_FETCHING
-                }
-                )
+
+        })
+        .catch(error => {
+
+            dispatch(
+                addError(error.message)
+            )
+
+            dispatch({
+                type: C.CANCEL_FETCHING
             })
-    };
-};
+
+        })
+
+}

@@ -1,18 +1,19 @@
-import storeFactory from './store';
-import { addDay, removeDay, setGoal, addError, suggestResortNames} from './actions'
+import C from './constants'
+import React from 'react'
+import { render } from 'react-dom'
+import routes from './routes'
+import sampleData from './initialState'
 
+const initialState = (localStorage["redux-store"]) ?
+    JSON.parse(localStorage["redux-store"]) :
+    sampleData
 
-const initialState = (localStorage['redux-store']) ? JSON.parse(localStorage['redux-store']) : {};
+const saveState = () => 
+    localStorage["redux-store"] = JSON.stringify(store.getState())
 
+window.React = React
 
-
-const saveState = () => {
-	const state = JSON.stringify(store.getState());
-	localStorage['redux-store'] = state;
-}
-
-const store = storeFactory(initialState)
-
-store.dispatch(
-	suggestResortNames("hea")
-);
+render(
+	routes,
+  document.getElementById('react-container')
+)
